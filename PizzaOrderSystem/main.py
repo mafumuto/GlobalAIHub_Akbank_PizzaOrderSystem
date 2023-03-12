@@ -477,7 +477,7 @@ class Main:
                           'Kredi Kartı Şifresi(şifreli)': password}]
             print(user_dict)
             user_df = pd.DataFrame(user_dict)
-            user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8')
+            user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a')
             display_goodbye()
         else:
             display_goodbye()
