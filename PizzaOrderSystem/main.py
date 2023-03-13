@@ -505,7 +505,7 @@ class Main:
         self.extra_data = Choice.extra_choice()
         self.pizza(*self.extra_data.values())
         print(self.pizza.get_description())
-        print(self.pizza.get_cost())
+        print(f"{self.pizza.get_cost()}TL")
 
         self.deneme = None
         self.temp_pizza = None
@@ -544,7 +544,7 @@ class Main:
             self.temp_pizza(*self.deneme)
 
             print(self.temp_pizza.get_description())
-            print(self.temp_pizza.get_cost())
+            print(f"{self.temp_pizza.get_cost()}TL")
 
             self.pizza = self.temp_pizza
 
