@@ -3,7 +3,6 @@ import datetime
 import pandas as pd
 import bcrypt
 
-
 with open("Menu.txt", "w", encoding='utf-8') as file:
     file.write("* Lütfen Bir Pizza Tabanı Seçiniz:\n1: Klasik\n2: Margarita\n3: TürkPizza\n4: Sade Pizza\n* ve "
                "seçeceğiniz sos:\n11: Zeytin\n12: Mantarlar\n13: Keçi Peyniri\n14: Et\n15: Soğan\n16: Mısır\n* "
@@ -415,6 +414,7 @@ Ingredients = {11: Olive(), 12: Mushroom(), 13: GoatCheese(), 14: Meat(), 15: On
 
 
 class Choice:
+    choice = None
     extra_choices = {}
     display_header()
     with open("Menu.txt", "r", encoding='utf-8') as file:
@@ -427,7 +427,6 @@ class Choice:
             try:
                 cls.choice = int(input("Lütfen seçmek istediğniz pizzanın numarasını giriniz. \n"))
                 if cls.choice in Pizzas.keys():
-                    cls.pizza = PizzaFactory(Pizzas[cls.choice])
                     return cls.choice
                 else:
                     print("Seçiminiz listede yoktur. Lütfen listede olan pizzanın numarasını tamsayı olarak giriniz.\n")
@@ -508,7 +507,6 @@ class Main:
         print(self.pizza.get_description())
         print(self.pizza.get_cost())
 
-
         self.deneme = None
         self.temp_pizza = None
         self.description = None
@@ -533,7 +531,8 @@ class Main:
         user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a')
 
     def is_valid(self,
-                 msg="İşlemi tamamlamak için 'y' harfini,\nSiparişten sos çıkarmak işlemi için 0 sayısını,\nİşlemi iptal etmek için 'n' veya herhangi bir harfi girebilirsiniz. İşlemi onaylıyor musunuz: Y/N"):
+                 msg="İşlemi tamamlamak için 'y' harfini,\nSiparişten sos çıkarmak işlemi için 0 sayısını,\nİşlemi "
+                     "iptal etmek için 'n' veya herhangi bir harfi girebilirsiniz. İşlemi onaylıyor musunuz: Y/N"):
         validation = input(msg)
 
         if validation.upper() == "Y":
