@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 import bcrypt
 
+
 with open("Menu.txt", "w", encoding='utf-8') as file:
     file.write("* Lütfen Bir Pizza Tabanı Seçiniz:\n1: Klasik\n2: Margarita\n3: TürkPizza\n4: Sade Pizza\n* ve "
                "seçeceğiniz sos:\n11: Zeytin\n12: Mantarlar\n13: Keçi Peyniri\n14: Et\n15: Soğan\n16: Mısır\n* "
@@ -206,7 +207,7 @@ class Ingredient:
         self.__descriptions = description
         self.__costs = cost
 
-    def get_descripton(self):
+    def get_description(self):
         return self.__descriptions
 
     def get_cost(self):
@@ -329,10 +330,13 @@ class PizzaFactory:
     def get_description(self):
         for d in self.extra:
             if d == self.extra[-1]:
-                self.extras_description += d.get_descripton()
+                self.extras_description += d.get_description()
             else:
-                self.extras_description += d.get_descripton() + ", "
+                self.extras_description += d.get_description() + ", "
         return f"{self.extras_description} {self.pizza.get_description()}"
+
+    def remove_extras(self):
+        pass
 
 
 def display_header(msg="Pizza Sipariş Sistemine Hoşgeldiniz"):
@@ -383,8 +387,8 @@ def user_data():
 
 
 def check_strong(password) -> True:
-    if not (6 <= len(password) <= 12):
-        print("Şifrenin uzunluğu 6'dan küçük 12'den büyük olmamalıdır")
+    if not (6 <= len(password)):
+        print("Şifrenin uzunluğu 6'dan küçük olmamalıdır")
         return False
     if any(char.isspace() for char in password):
         print("Şifrede boşluk bulunmamalıdır")
@@ -411,7 +415,7 @@ Ingredients = {11: Olive(), 12: Mushroom(), 13: GoatCheese(), 14: Meat(), 15: On
 
 
 class Choice:
-    extra_choices = []
+    extra_choices = {}
     display_header()
     with open("Menu.txt", "r", encoding='utf-8') as file:
         menu = file.read()
@@ -424,7 +428,7 @@ class Choice:
                 cls.choice = int(input("Lütfen seçmek istediğniz pizzanın numarasını giriniz. \n"))
                 if cls.choice in Pizzas.keys():
                     cls.pizza = PizzaFactory(Pizzas[cls.choice])
-                    return cls.pizza
+                    return cls.choice
                 else:
                     print("Seçiminiz listede yoktur. Lütfen listede olan pizzanın numarasını tamsayı olarak giriniz.\n")
             except ValueError:
@@ -440,10 +444,11 @@ class Choice:
                     break
                 elif extra_choice not in Ingredients.keys():
                     print("Seçiminiz listede yoktur. Lütfen listede olan sosun numarasını tamsayı olarak giriniz.\n")
-                elif Ingredients[extra_choice] in cls.extra_choices:
+                elif Ingredients[extra_choice] in cls.extra_choices.values():
                     print("bu seçimi zaten yapmıştınız")
                 elif extra_choice in Ingredients.keys():
-                    cls.extra_choices.append(Ingredients[extra_choice])
+                    deneme = Ingredients[extra_choice]
+                    cls.extra_choices.update({extra_choice: deneme})
 
             except ValueError:
                 print("Lütfen tamsayı bir değer(örneğin 1 gibi) giriniz. \n")
@@ -453,35 +458,103 @@ class Choice:
 
         return cls.extra_choices
 
+    @classmethod
+    def remove_pizza(cls):
+        pass
+
+    @classmethod
+    def remove_extra(cls):
+        print("Yaptığınız sos(ekstra malzeme) seçimleri şunlardır:\n")
+        if len(cls.extra_choices.keys()) == 0:
+            print("Siparişinizde sos seçimi bulanmamaktadır.\n")
+            return
+        for extra_num, extra in cls.extra_choices.items():
+            print(f"{extra_num}--->{extra.get_description()}\n")
+
+        while True:
+            try:
+                if len(cls.extra_choices.keys()) == 0:
+                    print("Siparişinizde başka sos bulunmamaktadır.")
+                    break
+                remove_choice = int(input(
+                    "İptal etmek istediğiniz sosun numarasını giriniz. İşlemi sonlandırmak için 0'ı girebilirsiniz.\n"))
+                if remove_choice == 0:
+                    break
+                elif remove_choice not in cls.extra_choices.keys():
+                    print("Seçiminiz listede yoktur. Lütfen listede olan sosun numarasını tamsayı olarak giriniz.\n")
+                elif remove_choice in cls.extra_choices.keys():
+                    cls.extra_choices.pop(remove_choice, None)
+
+            except ValueError:
+                print("Lütfen tamsayı bir değer(örneğin 1 gibi) giriniz. \n")
+
+            except Exception:
+                print("Hatalı seçim")
+
+        return cls.extra_choices.values()
+
 
 class Main:
     def __init__(self):
-        self.pizza_data = Choice.pizza_choice()
+        self.user_name = None
+        self.user_id = None
+        self.password = None
+        self.order_time = None
+        self.card_info = None
+        self.choice = Choice.pizza_choice()
+        self.pizza = PizzaFactory(Pizzas[self.choice])
         self.extra_data = Choice.extra_choice()
+        self.pizza(*self.extra_data.values())
+        print(self.pizza.get_description())
+        print(self.pizza.get_cost())
 
-    def is_valid(self, msg="İşlemi onaylıyor musunuz: Y/N"):
-        self.pizza_data(*self.extra_data)
-        description = self.pizza_data.get_description()
-        cost = f"{self.pizza_data.get_cost()}TL"
-        print(description)
-        print(cost)
+
+        self.deneme = None
+        self.temp_pizza = None
+        self.description = None
+        self.cost = None
+        self.user_dict = []
+
+    def take_order(self):
+        self.description = self.pizza.get_description()
+        self.cost = self.pizza.get_cost()
+
+        self.user_name, self.user_id, self.card_info, self.password, self.order_time = user_data()
+
+        self.user_dict = [{'Kullanıcı Adı': self.user_name,
+                           'Kullanıcı Kimliği': self.user_id,
+                           'Kredi Kartı Bilgileri': self.card_info,
+                           'Sipariş Açıklaması': self.description,
+                           'Sipariş Fiyatı': self.cost,
+                           'Sipariş Zamanı': self.order_time,
+                           'Kredi Kartı Şifresi(şifreli)': self.password}]
+
+        user_df = pd.DataFrame(self.user_dict)
+        user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a')
+
+    def is_valid(self,
+                 msg="İşlemi tamamlamak için 'y' harfini,\nSiparişten sos çıkarmak işlemi için 0 sayısını,\nİşlemi iptal etmek için 'n' veya herhangi bir harfi girebilirsiniz. İşlemi onaylıyor musunuz: Y/N"):
         validation = input(msg)
+
         if validation.upper() == "Y":
-            user_name, user_id, card_info, password, order_time = user_data()
-            user_dict = [{'Kullanıcı Adı': user_name,
-                          'Kullanıcı Kimliği': user_id,
-                          'Kredi Kartı Bilgileri': card_info,
-                          'Sipariş Açıklaması': description,
-                          'Sipariş Fiyatı': cost,
-                          'Sipariş Zamanı': order_time,
-                          'Kredi Kartı Şifresi(şifreli)': password}]
-            print(user_dict)
-            user_df = pd.DataFrame(user_dict)
-            user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a')
-            display_goodbye()
+            self.take_order()
+
+        elif validation == "0":
+            self.deneme = Choice.remove_extra()
+            self.temp_pizza = PizzaFactory(Pizzas[self.choice])
+            self.temp_pizza(*self.deneme)
+
+            print(self.temp_pizza.get_description())
+            print(self.temp_pizza.get_cost())
+
+            self.pizza = self.temp_pizza
+
+            self.is_valid()
+
         else:
-            display_goodbye()
+            print("İşleminiz iptal edildi")
 
 
 if __name__ == "__main__":
     Main().is_valid()
+    display_goodbye()
