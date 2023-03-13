@@ -557,5 +557,4 @@ class Main:
 if __name__ == "__main__":
 
     Main().is_valid()
-
     display_goodbye()
