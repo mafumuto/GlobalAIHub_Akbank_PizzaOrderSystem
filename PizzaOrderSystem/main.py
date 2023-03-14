@@ -408,7 +408,6 @@ def check_strong(password) -> True:
 
     return True
 
-
 Pizzas = {1: Classic, 2: Margherita, 3: TurkishPizza, 4: PlainPizza, 5: Mushroom}
 
 Ingredients = {11: Olive, 12: Mushroom, 13: GoatCheese, 14: Meat, 15: Onion, 16: Corn}
