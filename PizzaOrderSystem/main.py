@@ -2,7 +2,7 @@ import csv
 import datetime
 import pandas as pd
 import bcrypt
-import copy
+#import copy
 
 with open("Menu.txt", "w", encoding='utf-8') as file:
     file.write("* Lütfen Bir Pizza Tabanı Seçiniz:\n1: Klasik\n2: Margarita\n3: TürkPizza\n4: Sade Pizza\n* ve "
@@ -490,7 +490,7 @@ class Choice:
 
             except Exception:
                 print("Hatalı seçim")
-        print(cls.extra_choices.values())
+
         return cls.extra_choices.values()
 
 
@@ -517,9 +517,6 @@ class Main:
         self.user_dict = []
 
     def take_order(self):
-        self.description = self.pizza.get_description()
-        self.cost = self.pizza.get_cost()
-
         self.user_name, self.user_id, self.card_info, self.password, self.order_time = user_data()
 
         self.user_dict = {'Kullanıcı Adı': [self.user_name],
@@ -539,6 +536,8 @@ class Main:
         validation = input(msg)
 
         if validation.upper() == "Y":
+            self.description = self.pizza.get_description()
+            self.cost = self.pizza.get_cost()
             self.take_order()
 
         elif validation == "0":
@@ -547,18 +546,22 @@ class Main:
             for temp_den in self.deneme:
                 self.temp_pizza(temp_den())
 
-            print(self.temp_pizza.get_description())
-            print(f"{self.temp_pizza.get_cost()}TL")
+            self.description = self.temp_pizza.get_description()
+            self.cost = self.temp_pizza.get_cost()
 
-            self.pizza = copy.deepcopy(self.temp_pizza)
+            print(self.description)
+            print(self.cost)
 
-            self.is_valid()
+            self.take_order()
+
+            #self.pizza = copy.deepcopy(self.temp_pizza)
+
+
 
         else:
             print("İşleminiz iptal edildi")
 
 
-# daijobu 11112233222  1112232221321232
 
 if __name__ == "__main__":
 
