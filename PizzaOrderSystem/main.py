@@ -2,6 +2,7 @@ import csv
 import datetime
 import pandas as pd
 import bcrypt
+import copy
 
 with open("Menu.txt", "w", encoding='utf-8') as file:
     file.write("* Lütfen Bir Pizza Tabanı Seçiniz:\n1: Klasik\n2: Margarita\n3: TürkPizza\n4: Sade Pizza\n* ve "
@@ -408,9 +409,9 @@ def check_strong(password) -> True:
     return True
 
 
-Pizzas = {1: Classic(), 2: Margherita(), 3: TurkishPizza(), 4: PlainPizza(), 5: Mushroom()}
+Pizzas = {1: Classic, 2: Margherita, 3: TurkishPizza, 4: PlainPizza, 5: Mushroom}
 
-Ingredients = {11: Olive(), 12: Mushroom(), 13: GoatCheese(), 14: Meat(), 15: Onion(), 16: Corn()}
+Ingredients = {11: Olive, 12: Mushroom, 13: GoatCheese, 14: Meat, 15: Onion, 16: Corn}
 
 
 class Choice:
@@ -468,7 +469,7 @@ class Choice:
             print("Siparişinizde sos seçimi bulanmamaktadır.\n")
             return
         for extra_num, extra in cls.extra_choices.items():
-            print(f"{extra_num}--->{extra.get_description()}\n")
+            print(f"{extra_num}--->{Ingredients[extra_num]().get_description()}\n")
 
         while True:
             try:
@@ -489,7 +490,7 @@ class Choice:
 
             except Exception:
                 print("Hatalı seçim")
-
+        print(cls.extra_choices.values())
         return cls.extra_choices.values()
 
 
@@ -501,9 +502,11 @@ class Main:
         self.order_time = None
         self.card_info = None
         self.choice = Choice.pizza_choice()
-        self.pizza = PizzaFactory(Pizzas[self.choice])
-        self.extra_data = Choice.extra_choice()
-        self.pizza(*self.extra_data.values())
+        self.pizza = PizzaFactory(Pizzas[self.choice]())
+        self.extra_data = Choice.extra_choice().values()
+
+        for den in self.extra_data:
+            self.pizza(den())
         print(self.pizza.get_description())
         print(f"{self.pizza.get_cost()}TL")
 
@@ -519,16 +522,16 @@ class Main:
 
         self.user_name, self.user_id, self.card_info, self.password, self.order_time = user_data()
 
-        self.user_dict = [{'Kullanıcı Adı': self.user_name,
-                           'Kullanıcı Kimliği': self.user_id,
-                           'Kredi Kartı Bilgileri': self.card_info,
-                           'Sipariş Açıklaması': self.description,
-                           'Sipariş Fiyatı': self.cost,
-                           'Sipariş Zamanı': self.order_time,
-                           'Kredi Kartı Şifresi(şifreli)': self.password}]
+        self.user_dict = {'Kullanıcı Adı': [self.user_name],
+                           'Kullanıcı Kimliği': [self.user_id],
+                           'Kredi Kartı Bilgileri': [self.card_info],
+                           'Sipariş Açıklaması': [self.description],
+                           'Sipariş Fiyatı': [self.cost],
+                           'Sipariş Zamanı': [self.order_time],
+                           'Kredi Kartı Şifresi(şifreli)': [self.password]}
 
         user_df = pd.DataFrame(self.user_dict)
-        user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a')
+        user_df.to_csv("Orders_Database.csv", index=True, encoding='utf-8', mode='a', header=False)
 
     def is_valid(self,
                  msg="İşlemi tamamlamak için 'y' harfini,\nSiparişten sos çıkarmak işlemi için 0 sayısını,\nİşlemi "
@@ -540,13 +543,14 @@ class Main:
 
         elif validation == "0":
             self.deneme = Choice.remove_extra()
-            self.temp_pizza = PizzaFactory(Pizzas[self.choice])
-            self.temp_pizza(*self.deneme)
+            self.temp_pizza = PizzaFactory(Pizzas[self.choice]())
+            for temp_den in self.deneme:
+                self.temp_pizza(temp_den())
 
             print(self.temp_pizza.get_description())
             print(f"{self.temp_pizza.get_cost()}TL")
 
-            self.pizza = self.temp_pizza
+            self.pizza = copy.deepcopy(self.temp_pizza)
 
             self.is_valid()
 
@@ -554,7 +558,10 @@ class Main:
             print("İşleminiz iptal edildi")
 
 
+# daijobu 11112233222  1112232221321232
+
 if __name__ == "__main__":
 
     Main().is_valid()
+
     display_goodbye()

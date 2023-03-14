@@ -1,2 +1,4 @@
 ,Kullanıcı Adı,Kullanıcı Kimliği,Kredi Kartı Bilgileri,Sipariş Açıklaması,Sipariş Fiyatı,Sipariş Zamanı,Kredi Kartı Şifresi(şifreli)
 0,moshimoshi,11111122321,1211111321314531,"Ekstra Zeytinli, Ekstra Mısırlı Klasik Pizza",100TL,12-03-23 04:01:57,b'$2b$12$8VOGMcnMaTyOlOSx7AQwCetFIYJsInVy5sI6URWHTCEaAi1XWnWHm'
+0,daijobu,11112233222,1112232221321232,"Ekstra Mantarlı, Ekstra MısırlıEkstra Mantarlı, Ekstra Mısırlı Klasik Pizza",108,14-03-23 11:11:20,b'$2b$12$pVZXbQclAS4SpLOsqto7OegeAKGaXx1Pp5kjckB4HLiHB4Vh6Psnq'
+0,daijobudesuka,11112233211,1112232221321255,"Ekstra Soğanlı, Ekstra MısırlıEkstra Soğanlı, Ekstra Mısırlı Klasik Pizza",104,14-03-23 11:13:05,b'$2b$12$0j7aeOanXCoCrwsa6e795.wsKqqtGsSQu8ipgHI1rvv./4iq6WA/2'
