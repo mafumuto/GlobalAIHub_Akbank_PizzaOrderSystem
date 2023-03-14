@@ -523,7 +523,7 @@ class Main:
                            'Kullanıcı Kimliği': [self.user_id],
                            'Kredi Kartı Bilgileri': [self.card_info],
                            'Sipariş Açıklaması': [self.description],
-                           'Sipariş Fiyatı': [self.cost],
+                           'Sipariş Fiyatı': [f"{self.cost}TL"],
                            'Sipariş Zamanı': [self.order_time],
                            'Kredi Kartı Şifresi(şifreli)': [self.password]}
 
@@ -550,7 +550,7 @@ class Main:
             self.cost = self.temp_pizza.get_cost()
 
             print(self.description)
-            print(self.cost)
+            print(f"{self.cost}TL")
 
             self.take_order()
 
